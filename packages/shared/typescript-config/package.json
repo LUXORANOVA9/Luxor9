@@ -1,0 +1,26 @@
+{
+  "name": "@luxoranova9/typescript-config",
+  "version": "1.0.0",
+  "description": "Shared TypeScript configuration for LUXORANOVA9 monorepo",
+  "main": "index.json",
+  "files": [
+    "base.json",
+    "node.json",
+    "react.json"
+  ],
+  "keywords": [
+    "typescript",
+    "config",
+    "luxoranova9"
+  ],
+  "author": "LUXORANOVA9",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LUXORANOVA9/Luxor9.git",
+    "directory": "packages/shared/typescript-config"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

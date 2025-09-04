@@ -1,0 +1,32 @@
+{
+  "name": "@luxoranova9/eslint-config",
+  "version": "1.0.0",
+  "description": "Shared ESLint configuration for LUXORANOVA9 monorepo",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "react.js",
+    "node.js"
+  ],
+  "keywords": [
+    "eslint",
+    "config",
+    "luxoranova9"
+  ],
+  "author": "LUXORANOVA9",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LUXORANOVA9/Luxor9.git",
+    "directory": "packages/shared/eslint-config"
+  },
+  "peerDependencies": {
+    "eslint": "^8.0.0"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0"
+  }
+}
