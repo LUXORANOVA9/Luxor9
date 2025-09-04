@@ -1,6 +1,5 @@
 const baseConfig = require('@luxoranova9/jest-config');
 
 module.exports = {
-  ...baseConfig,
-  roots: ['<rootDir>/src']
+  ...baseConfig
 };

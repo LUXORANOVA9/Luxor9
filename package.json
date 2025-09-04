@@ -20,7 +20,10 @@
     "dev": "npm run dev --workspaces --if-present",
     "clean": "npm run clean --workspaces --if-present",
     "install:all": "npm install && npm run build",
-    "bootstrap": "npm run install:all && npm run build"
+    "bootstrap": "npm run install:all && npm run build",
+    "create:package": "bash scripts/create-package.sh",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",

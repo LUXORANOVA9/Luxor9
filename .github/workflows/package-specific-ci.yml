@@ -1,0 +1,240 @@
+name: Package-Specific CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'packages/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'packages/**'
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      ai-packages: ${{ steps.changes.outputs.ai }}
+      saas-packages: ${{ steps.changes.outputs.saas }}
+      tools-packages: ${{ steps.changes.outputs.tools }}
+      frameworks-packages: ${{ steps.changes.outputs.frameworks }}
+      notebooks-packages: ${{ steps.changes.outputs.notebooks }}
+      shared-packages: ${{ steps.changes.outputs.shared }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for package changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            ai:
+              - 'packages/ai/**'
+            saas:
+              - 'packages/saas/**'
+            tools:
+              - 'packages/tools/**'
+            frameworks:
+              - 'packages/frameworks/**'
+            notebooks:
+              - 'packages/notebooks/**'
+            shared:
+              - 'packages/shared/**'
+
+  test-ai-packages:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.ai-packages == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build AI packages
+        run: npm run build --workspace=packages/ai/*
+
+      - name: Test AI packages
+        run: npm run test --workspace=packages/ai/*
+
+      - name: Lint AI packages
+        run: npm run lint --workspace=packages/ai/*
+
+  test-saas-packages:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.saas-packages == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build SaaS packages
+        run: npm run build --workspace=packages/saas/*
+
+      - name: Test SaaS packages
+        run: npm run test --workspace=packages/saas/*
+
+      - name: Lint SaaS packages
+        run: npm run lint --workspace=packages/saas/*
+
+  test-tools-packages:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.tools-packages == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Tools packages
+        run: npm run build --workspace=packages/tools/*
+
+      - name: Test Tools packages
+        run: npm run test --workspace=packages/tools/*
+
+      - name: Lint Tools packages
+        run: npm run lint --workspace=packages/tools/*
+
+  test-frameworks-packages:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frameworks-packages == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Frameworks packages
+        run: npm run build --workspace=packages/frameworks/*
+
+      - name: Test Frameworks packages
+        run: npm run test --workspace=packages/frameworks/*
+
+      - name: Lint Frameworks packages
+        run: npm run lint --workspace=packages/frameworks/*
+
+  test-notebooks-packages:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.notebooks-packages == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Notebooks packages
+        run: npm run build --workspace=packages/notebooks/*
+
+      - name: Test Notebooks packages
+        run: npm run test --workspace=packages/notebooks/*
+
+      - name: Lint Notebooks packages
+        run: npm run lint --workspace=packages/notebooks/*
+
+  test-shared-packages:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.shared-packages == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Test shared package configurations
+        run: |
+          echo "Testing shared configurations..."
+          npm run lint --workspace=packages/notebooks/colab-snippets
+          npm run test --workspace=packages/notebooks/colab-snippets
+          npm run build --workspace=packages/notebooks/colab-snippets
+
+  deploy-packages:
+    needs: [test-ai-packages, test-saas-packages, test-tools-packages, test-frameworks-packages, test-notebooks-packages, test-shared-packages]
+    if: always() && github.ref == 'refs/heads/main' && !failure() && !cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ github.sha }}
+          path: |
+            packages/*/dist/
+            packages/*/build/
+          retention-days: 30
