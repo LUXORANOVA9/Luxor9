@@ -1,25 +1,31 @@
 {
-  "name": "@luxoranova9/colab-snippets",
+  "name": "@luxoranova9/PACKAGE-NAME",
   "version": "1.0.0",
-  "description": "Collection of Google Colab snippets and notebook utilities",
+  "description": "PACKAGE DESCRIPTION",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "lint": "eslint src/**/*.ts",
-    "clean": "rm -rf dist"
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "clean": "rm -rf dist coverage"
   },
   "keywords": [
-    "jupyter",
-    "colab",
-    "notebooks",
-    "python",
-    "snippets"
+    "ai",
+    "machine-learning",
+    "luxoranova9"
   ],
   "author": "LUXORANOVA9",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LUXORANOVA9/Luxor9.git",
+    "directory": "packages/ai/PACKAGE-NAME"
+  },
   "devDependencies": {
     "@luxoranova9/eslint-config": "^1.0.0",
     "@luxoranova9/jest-config": "^1.0.0",
@@ -31,14 +37,9 @@
     "prettier": "^3.0.0",
     "typescript": "^5.0.0"
   },
+  "dependencies": {},
   "files": [
     "dist/",
-    "README.md",
-    "*.ipynb"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LUXORANOVA9/Luxor9.git",
-    "directory": "packages/notebooks/colab-snippets"
-  }
+    "README.md"
+  ]
 }

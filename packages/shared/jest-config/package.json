@@ -1,0 +1,29 @@
+{
+  "name": "@luxoranova9/jest-config",
+  "version": "1.0.0",
+  "description": "Shared Jest configuration for LUXORANOVA9 monorepo",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "jest",
+    "config",
+    "testing",
+    "luxoranova9"
+  ],
+  "author": "LUXORANOVA9",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LUXORANOVA9/Luxor9.git",
+    "directory": "packages/shared/jest-config"
+  },
+  "peerDependencies": {
+    "jest": "^29.0.0"
+  },
+  "dependencies": {
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  }
+}
