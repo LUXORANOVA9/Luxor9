@@ -5,11 +5,13 @@ on:
         branches: [main]
 
 jobs:
-    deploy-backend:
+    deploy:
         runs-on: ubuntu-latest
         steps:
-            - name: Deploy to Render
+            - name: Trigger Coolify Deploy
               run: |
-                  curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
-              # Set RENDER_DEPLOY_HOOK in GitHub Secrets
-              # Get it from: Render Dashboard → Service → Settings → Deploy Hook
+                  curl -s -X POST "${{ secrets.COOLIFY_WEBHOOK }}" \
+                    -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
+              # Set in GitHub Secrets:
+              # COOLIFY_WEBHOOK = your Coolify webhook URL
+              # COOLIFY_TOKEN   = your Coolify API token

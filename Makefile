@@ -21,11 +21,10 @@ build:
 # DEPLOYMENT (Render + Vercel)
 # ════════════════════════════
 
-# Deploy backend to Render (via webhook)
+# Deploy backend via Coolify webhook
 deploy:
-	@echo "🚀 Deploying to Render..."
-	@curl -s -X POST "$(RENDER_DEPLOY_HOOK)" && echo " ✅ Backend deploy triggered"
-	@echo "🎨 Frontend auto-deploys via Vercel on git push"
+	@echo "🚀 Deploying to Coolify..."
+	@curl -s -X POST "$(COOLIFY_WEBHOOK)" -H "Authorization: Bearer $(COOLIFY_TOKEN)" && echo " ✅ Deploy triggered"
 
 # ════════════════════════════
 # SETUP

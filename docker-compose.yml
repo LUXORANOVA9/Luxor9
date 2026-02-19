@@ -12,11 +12,15 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - workspaces:/data/workspaces
-      - ./backend:/app
     env_file:
       - .env
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     networks:
       - luxor9
 
@@ -24,8 +28,6 @@ services:
     image: redis:7-alpine
     container_name: luxor9-redis
     restart: always
-    ports:
-      - "6379:6379"
     volumes:
       - redis-data:/data
     command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
