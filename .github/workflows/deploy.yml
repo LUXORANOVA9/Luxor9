@@ -1,0 +1,15 @@
+name: Deploy Luxor9
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    deploy-backend:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to Render
+              run: |
+                  curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+              # Set RENDER_DEPLOY_HOOK in GitHub Secrets
+              # Get it from: Render Dashboard → Service → Settings → Deploy Hook

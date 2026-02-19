@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: luxor9-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - workspaces:/data/workspaces
+      - ./backend:/app
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - luxor9
+
+  redis:
+    image: redis:7-alpine
+    container_name: luxor9-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
+    networks:
+      - luxor9
+
+volumes:
+  workspaces:
+  redis-data:
+
+networks:
+  luxor9:
+    driver: bridge

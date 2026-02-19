@@ -1,0 +1,95 @@
+/* frontend/app/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 13 9 6;
+    --foreground: 245 244 242;
+    --accent: 215 122 53;
+  }
+
+  body {
+    @apply bg-night-950 text-gray-100 antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-night-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-night-700 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-night-600;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-night-900/60 backdrop-blur-xl border border-night-700/50;
+  }
+
+  .glass-hover {
+    @apply hover:bg-night-800/60 hover:border-night-600/50 transition-all duration-200;
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(215, 122, 53, 0.15);
+  }
+}
+
+/* Terminal text animation */
+@keyframes blink {
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink::after {
+  content: '▊';
+  animation: blink 1s infinite;
+  @apply text-luxor-400;
+}
+
+/* File Tree Indentation */
+[data-depth="0"] {
+  padding-left: 8px;
+}
+
+[data-depth="1"] {
+  padding-left: 24px;
+}
+
+[data-depth="2"] {
+  padding-left: 40px;
+}
+
+[data-depth="3"] {
+  padding-left: 56px;
+}
+
+[data-depth="4"] {
+  padding-left: 72px;
+}
+
+[data-depth="5"] {
+  padding-left: 88px;
+}
