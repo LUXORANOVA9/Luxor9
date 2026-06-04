@@ -16,6 +16,8 @@ out/
 dist/
 build/
 *.egg-info/
+next-env.d.ts
+*.tsbuildinfo
 
 # IDE
 .vscode/
