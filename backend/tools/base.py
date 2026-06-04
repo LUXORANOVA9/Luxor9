@@ -41,7 +41,8 @@ def get_all_tools() -> List[BaseTool]:
     from tools.search import WebSearchTool
     from tools.code_runner import PythonRunTool
     from tools.deploy import DeployTool
-    
+    from tools.fundraiser import get_fundraiser_tools
+
     return [
         ShellTool(),
         FileReadTool(),
@@ -55,4 +56,4 @@ def get_all_tools() -> List[BaseTool]:
         WebSearchTool(),
         PythonRunTool(),
         DeployTool(),
-    ]
+    ] + get_fundraiser_tools()

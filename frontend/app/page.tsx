@@ -47,6 +47,12 @@ export default function HomePage() {
                     <span className="text-luxor-300">9</span>
                 </h1>
                 <p className="text-night-400 text-lg">Your AI Workforce. Multi-Agent Task Execution.</p>
+                <button
+                    onClick={() => router.push('/fundraising')}
+                    className="mt-4 inline-flex items-center gap-2 text-sm bg-luxor-600/20 hover:bg-luxor-600/30 border border-luxor-600/40 hover:border-luxor-500 text-luxor-300 rounded-full px-4 py-2 transition-all"
+                >
+                    💰 Open Fundraising OS →
+                </button>
             </div>
 
             {/* Task Input */}

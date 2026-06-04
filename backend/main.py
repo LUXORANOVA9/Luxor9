@@ -14,6 +14,13 @@ from storage import storage
 from agent import Agent
 from ws_manager import ConnectionManager
 
+# Fundraising OS
+import fundraising.models  # noqa: F401 — register models on Base.metadata
+from fundraising.roles import get_role_prompt
+from fundraising.seed import seed_capital_sources
+from fundraising.scheduler import followup_scheduler_loop
+from fundraising import api as fundraising_api
+
 # ═══════════════════
 # Globals
 # ═══════════════════
@@ -21,6 +28,7 @@ from ws_manager import ConnectionManager
 llm_router: FreeLLMRouter = None
 ws_manager = ConnectionManager()
 active_tasks = {}
+_scheduler_stop = asyncio.Event()
 
 
 @asynccontextmanager
@@ -29,13 +37,28 @@ async def lifespan(app: FastAPI):
     llm_router = FreeLLMRouter()
     os.makedirs(settings.WORKSPACE_ROOT, exist_ok=True)
 
-    # Init database tables
+    # Init database tables (includes fundraising tables via imported models)
     await db.init_tables()
+
+    # Fundraising OS: seed the capital-sources pipeline + start follow-up scheduler
+    try:
+        seeded = await seed_capital_sources()
+        print(f"💰 Seeded {seeded} capital sources")
+    except Exception as e:
+        print(f"⚠️  Capital source seed skipped: {e}")
+
+    fundraising_api.set_task_launcher(launch_fundraising_task)
+    _scheduler_stop.clear()
+    scheduler_task = asyncio.create_task(followup_scheduler_loop(_scheduler_stop))
 
     print("🚀 Luxor9 Backend — Free Cloud Edition")
     print(f"🧠 LLM Providers: {list(llm_router.providers.keys())}")
     print(f"🗄️  Database: Neon PostgreSQL")
+    print(f"📤 Auto-send: {settings.AUTO_SEND} | Follow-up interval: {settings.FOLLOWUP_INTERVAL_MIN}m")
     yield
+
+    _scheduler_stop.set()
+    scheduler_task.cancel()
 
 
 app = FastAPI(title="Luxor9", version="0.2.0", lifespan=lifespan)
@@ -47,6 +70,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(fundraising_api.router)
 
 
 # ═══════════════════
@@ -172,6 +197,11 @@ async def task_ws(websocket: WebSocket, task_id: str):
 # TASK EXECUTION
 # ═══════════════════
 
+async def launch_fundraising_task(task_id: str, description: str, config: dict):
+    """Launcher injected into the fundraising API router (task row already created)."""
+    asyncio.create_task(run_task(task_id, description, config))
+
+
 async def run_task(task_id: str, description: str, config: dict):
     """Execute a task using the agent."""
     workspace = os.path.join(settings.WORKSPACE_ROOT, task_id)
@@ -183,13 +213,15 @@ async def run_task(task_id: str, description: str, config: dict):
         event["task_id"] = task_id
         await ws_manager.broadcast_to_task(task_id, event)
 
+    role = (config or {}).get("role", "general")
     agent = Agent(
         name=task_id,
-        role="general",
+        role=role,
         llm_router=llm_router,
         workspace_path=workspace,
         event_callback=emit,
         database=db,
+        system_prompt_extra=get_role_prompt(role),
     )
 
     active_tasks[task_id] = {"agent": agent}

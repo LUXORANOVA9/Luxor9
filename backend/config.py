@@ -15,4 +15,15 @@ class Settings:
     UPSTASH_REDIS_URL = os.getenv("UPSTASH_REDIS_URL", "")
     UPSTASH_REDIS_TOKEN = os.getenv("UPSTASH_REDIS_TOKEN", "")
 
+    # Fundraising OS — outreach email (SMTP) + autonomous follow-ups
+    SMTP_HOST = os.getenv("SMTP_HOST", "")
+    SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER = os.getenv("SMTP_USER", "")
+    SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
+    FROM_EMAIL = os.getenv("FROM_EMAIL", "")
+    FOUNDER_EMAIL = os.getenv("FOUNDER_EMAIL", "")
+    # Master switch: when false, outreach is drafted but never auto-sent.
+    AUTO_SEND = os.getenv("AUTO_SEND", "false").lower() in ("1", "true", "yes")
+    FOLLOWUP_INTERVAL_MIN = int(os.getenv("FOLLOWUP_INTERVAL_MIN", "30"))
+
 settings = Settings()
